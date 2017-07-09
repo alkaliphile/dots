@@ -1,6 +1,4 @@
-# dots
-
-Dots and Boxes
+# Dots and Boxes
 
 A simple JavaScript version of the class game, Dots and Boxes.
 

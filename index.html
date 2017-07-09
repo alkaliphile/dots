@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dots and Boxes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  </head>
+  <body>
+    <div class="heading">
+      <h2>Dots and Boxes</h2>
+    </div>
+
+    <hr>
+
+    <div class="intro">
+      <p>This JavaScript version of the classic dots and boxes game requires both players to use the same browser.</p>
+      <p>Just grab a friend, enter the number of rows and columns you want, and click 'Play!' to start a game.</p>
+      <p>Note: Maximum game size is 8x8.</p>
+    </div>
+
+    <div class="input-container">
+      <div class="game-setup">
+        <div class="gameboard-input-rows">
+          <label for="rows">Rows:</label>
+          <input type="number" class="form-control rows" name="rows" min="1" max="8" placeholder="1">
+        </div>
+
+        <div class="gameboard-input-cols">
+          <label for="columns">Columns:</label>
+          <input type="number" class="form-control cols" name="col" min="1" max="8" placeholder="1">
+        </div>
+
+        <div class="gameboard-submit">
+          <button type="submit" class="btn btn-primary">Play!</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="game-container"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

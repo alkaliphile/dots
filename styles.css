@@ -1,0 +1,184 @@
+html {
+  font-family: "Open Sans", arial;
+}
+
+body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 700px;
+}
+
+h2 {
+  color: #333;
+}
+
+.heading {
+  text-align: center;
+}
+
+.intro {
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.input-container {
+  width: 80%;
+  margin: 0 auto 1em;
+  text-align: center;
+}
+
+.game-container {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+[class*=gameboard-input] {
+  display: inline-block;
+  padding: 0 5px;
+}
+
+.gameboard-submit, .gameboard-reset {
+  display: inline-block;
+  padding: 0 5px;
+}
+
+.score-board {
+  width: 80%;
+  margin: 0 auto 1em;
+  text-align: center;
+}
+
+.game-over {
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.form-control {
+  padding: 5px;
+  line-height: 1.25;
+  color: #464a4c;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 4px;
+}
+
+.btn {
+  display: inline-block;
+  font-family: "Open Sans", arial;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all .2s ease-in-out;
+}
+
+.btn:active, .btn:focus {
+  outline: none;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #318082;
+  border-color: #318082;
+}
+
+.btn-secondary {
+  color: #5b3182;
+  background-color: #fff;
+  border-color: #5b3182;
+}
+
+.btn-primary:hover {
+  color: #318082;
+  background-color: #fff;
+  border-color: #318082;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  color: #fff;
+  background-color: #5b3182;
+  border-color: #5b3182;
+  cursor: pointer;
+}
+
+.corner {
+  width: 8px;
+  height: 8px;
+  margin: 0 5px;
+  background-color: #000;
+  display: inline-block;
+}
+
+[class*="he-"] {
+  width: 50px;
+  height: 8px;
+  display: inline-block;
+}
+
+[class*="ve-"] {
+  height: 50px;
+  width: 8px;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.p1-turn:hover {
+  cursor: pointer;
+  background-color: #318082;
+}
+
+.p2-turn:hover {
+  cursor: pointer;
+  background-color: #5b3182;
+}
+
+[class*="vertical-row"] {
+  height: 50px;
+}
+
+[class*="horizontal-row"] {
+  margin-top: -2px;
+}
+
+[class*="box"] {
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+}
+
+.player-1 {
+  background-color: #318082;
+}
+
+.player-2 {
+  background-color: #5b3182;
+}
+
+.p1-score {
+  background-color: #318082;
+  color: #fff;
+}
+
+.p2-score {
+  background-color: #5b3182;
+  color: #fff;
+}
+
+[class*="-score"] {
+  width: 30%;
+  margin: 0 auto 0.5em;
+  line-height: 1.25;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 1em;
+}

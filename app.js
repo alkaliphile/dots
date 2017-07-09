@@ -1,37 +1,96 @@
 window.addEventListener('DOMContentLoaded', function () {
 
-  var horizontalRowCreated = false;
-  var verticalRowCreated = false;
-  var boxValues = {};
-  var firstPlayerTurn = true;
-  var scored;
-  var playAgain = false;
-  var resetGame = false;
+  // initial values for game variables.
+  var initializeValues = function(bool) {
+    boxValues = {};
+    firstPlayerTurn = true;
+    resetGame = false;
+    playerOneScore = 0;
+    playerTwoScore = 0;
 
-  playerOneScore = 0;
-  playerTwoScore = 0;
+    if (bool) {
+      playAgain = true;
+    } else {
+      playAgain = false;
+    }
+  }
+
+  initializeValues(false);
+
+
+  ///////////////////////////////////////////////////////////
+  // functions for event handlers
 
   var setupBoard = function() {
+
     if (resetGame || !playAgain) {
       rows = document.querySelector('.rows');
       cols = document.querySelector('.cols');
     }
 
+    validateInput();
+    createRows();
+    addScoresReset();
+  }
+
+  var edgeClick = function(event) {
+    changeEdgeColor.call(this);
+    var scored = incrementScores(addEdgeClicks());
+    checkTurnChange(scored);
+    checkIfOver();
+  }
+
+  var resetBoard = function() {
+    initializeValues(false);
+    destroyBoard();
+    recreateInput();
+    listenByClass('.gameboard-submit', 'click', setupBoard);
+  }
+
+  var playAgainReset = function() {
+    initializeValues(true);
+    destroyGameOver();
+    resetScoreboard();
+    setupBoard();
+  }
+
+
+  ///////////////////////////////////////////////////////////
+  // Define helpers to add event listeners, then use to setup game.
+
+  var listenByDiv = function(divName, eventName, func) {
+    divName.addEventListener(eventName, func);
+  }
+
+  var listenByClass = function(className, eventName, func) {
+    document.querySelector(className).addEventListener(eventName, func);
+  }
+
+  listenByClass('.gameboard-submit', 'click', setupBoard);
+
+
+  ///////////////////////////////////////////////////////////
+  // setupBoard functions
+
+  var validateInput = function() {
+
     if (rows.value > 8) {
       rows.value = 8;
-    }
-
-    if (rows.value < 1) {
+    } else if (rows.value < 1) {
       rows.value = 1;
     }
 
     if (cols.value > 8) {
       cols.value = 8;
-    }
-
-    if (cols.value < 1) {
+    } else if (cols.value < 1) {
       cols.value = 1;
     }
+  }
+
+  var createRows = function() {
+
+    var horizontalRowCreated = false;
+    var verticalRowCreated = false;
 
     for (var j = 0; j <= rows.value; j++) {
       for (var i = 1; i <= cols.value; i++) {
@@ -55,8 +114,7 @@ window.addEventListener('DOMContentLoaded', function () {
         var horizontalEdgeDiv = document.createElement('div');
         document.querySelector('.horizontal-row-' + j).appendChild(horizontalEdgeDiv);
         horizontalEdgeDiv.className = 'he-' + (j + 1) + i + ' p1-turn';
-
-        horizontalEdgeDiv.addEventListener('click', edgeClick);
+        listenByDiv(horizontalEdgeDiv, 'click', edgeClick);
 
 
         if (i == cols.value) {
@@ -77,7 +135,7 @@ window.addEventListener('DOMContentLoaded', function () {
           var verticalEdgeDiv = document.createElement('div');
           document.querySelector('.vertical-row-' + j).appendChild(verticalEdgeDiv);
           verticalEdgeDiv.className = 've-' + (j + 1) + i + ' p1-turn';
-          verticalEdgeDiv.addEventListener('click', edgeClick);
+          listenByDiv(verticalEdgeDiv, 'click', edgeClick);
 
           var boxDiv = document.createElement('div');
           document.querySelector('.vertical-row-' + j).appendChild(boxDiv);
@@ -87,27 +145,30 @@ window.addEventListener('DOMContentLoaded', function () {
             var verticalEdgeDiv = document.createElement('div');
             document.querySelector('.vertical-row-' + j).appendChild(verticalEdgeDiv);
             verticalEdgeDiv.className = 've-' + (j + 1) + (i + 1) +  ' p1-turn';
-            verticalEdgeDiv.addEventListener('click', edgeClick);
+            listenByDiv(verticalEdgeDiv, 'click', edgeClick);
             verticalRowCreated = false;
           }
         }
       }
     }
+  }
 
-    var gameSetup = document.querySelector('.game-setup');
+  var addScoresReset = function() {
     if (!playAgain) {
+      var gameSetup = document.querySelector('.game-setup');
       this.removeEventListener('click', setupBoard);
       gameSetup.remove();
 
       var resetBoardDiv = document.createElement('div');
-      var resetButton = document.createElement('button');
-      document.querySelector('.input-container').appendChild(resetBoardDiv);
       resetBoardDiv.className = 'gameboard-reset';
+      document.querySelector('.input-container').appendChild(resetBoardDiv);
 
-      resetBoardDiv.appendChild(resetButton);
+      var resetButton = document.createElement('button');
       resetButton.className = 'btn btn-secondary reset-board';
       resetButton.innerHTML = 'Setup Again';
-      document.querySelector('.reset-board').addEventListener('click', resetBoard);
+      resetBoardDiv.appendChild(resetButton);
+
+      listenByClass('.reset-board', 'click', resetBoard);
 
       var scoreBoard = document.createElement('div');
       document.body.appendChild(scoreBoard);
@@ -126,15 +187,19 @@ window.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  var edgeClick = function(event) {
+  ///////////////////////////////////////////////////////////
+  // edgeClick functions
 
+  var changeEdgeColor = function() {
+    this.style.backgroundColor = '#000';
+    this.className = event.target.className.substring(0,5);
+    this.removeEventListener('click', edgeClick);
+  }
+
+  var addEdgeClicks = function() {
     var edgeRow = parseInt(event.target.className.substring(3,4));
     var edgeCol = parseInt(event.target.className.substring(4,5));
-    var boxIndex = {};
-
-    var playerOneScoreDiv = document.querySelector('.p1-score');
-    var playerTwoScoreDiv = document.querySelector('.p2-score');
-
+    var boxIndex = [];
     if (event.target.className.includes('he')) {
       if (edgeRow == 1) {
         boxIndex[0] = "" + edgeRow + edgeCol;
@@ -157,42 +222,30 @@ window.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    // Refactor into method to loop over all box indices
-    boxValues[boxIndex[0]]['numberFilled']++;
-    if (boxValues[boxIndex[0]]['numberFilled'] == 4) {
-      if (firstPlayerTurn) {
-        playerOneScore++;
-        document.querySelector('.box-' + boxIndex[0]).className = 'box-' + boxIndex[0] + ' player-1';
-        playerOneScoreDiv.innerHTML = 'Player One Score: ' + playerOneScore;
-      } else {
-        playerTwoScore++;
-        document.querySelector('.box-' + boxIndex[0]).className = 'box-' + boxIndex[0] + ' player-2';
-        playerTwoScoreDiv.innerHTML = 'Player Two Score: ' + playerTwoScore;
-      }
-      scored = true;
-    }
-    if (boxValues[boxIndex[1]]) {
-      boxValues[boxIndex[1]]['numberFilled']++;
+    return boxIndex;
+  }
 
-      if (boxValues[boxIndex[1]]['numberFilled'] == 4) {
+  var incrementScores = function(box) {
+    scored = false;
+    for (var k = 0; k < box.length; k++) {
+      boxValues[box[k]]['numberFilled']++;
+      if (boxValues[box[k]]['numberFilled'] == 4) {
         if (firstPlayerTurn) {
           playerOneScore++;
-          document.querySelector('.box-' + boxIndex[1]).className = 'box-' + boxIndex[0] + ' player-1';
-          playerOneScoreDiv.innerHTML = 'Player One Score: ' + playerOneScore;
+          document.querySelector('.box-' + box[k]).className = 'box player-1';
+          document.querySelector('.p1-score').innerHTML = 'Player One Score: ' + playerOneScore;
         } else {
           playerTwoScore++;
-          document.querySelector('.box-' + boxIndex[1]).className = 'box-' + boxIndex[1] + ' player-2';
-          playerTwoScoreDiv.innerHTML = 'Player Two Score: ' + playerTwoScore;
+          document.querySelector('.box-' + box[k]).className = 'box player-2';
+          document.querySelector('.p2-score').innerHTML = 'Player Two Score: ' + playerTwoScore;
         }
-        scored = true;
+        var scored = true;
       }
     }
-    //
+    return scored;
+  }
 
-    this.style.backgroundColor = '#000';
-    this.className = event.target.className.substring(0,5);
-    this.removeEventListener('click', edgeClick);
-
+  var checkTurnChange = function(scored) {
     if (!scored) {
       if (firstPlayerTurn) {
         var emptyNodes = document.querySelectorAll('.p1-turn');
@@ -207,8 +260,9 @@ window.addEventListener('DOMContentLoaded', function () {
       }
       firstPlayerTurn = !firstPlayerTurn;
     }
-    scored = false;
+  }
 
+  var checkIfOver = function() {
     if (playerOneScore + playerTwoScore == (rows.value * cols.value)) {
 
       var gameOverDiv = document.createElement('div');
@@ -232,50 +286,45 @@ window.addEventListener('DOMContentLoaded', function () {
       playAgainButton.className = 'btn btn-primary play-again';
       playAgainButton.innerHTML = 'Play Again!';
 
-      document.getElementsByClassName('play-again')[0].addEventListener('click', playAgainReset);
-
+      listenByClass('.play-again', 'click', playAgainReset);
     }
-
   }
 
-  let resetBoard = function() {
-    boxValues = {};
-    firstPlayerTurn = true;
-    playAgain = false;
-    playerOneScore = 0;
-    playerTwoScore = 0;
 
+  ///////////////////////////////////////////////////////////
+  // resetBoard functions
+
+  var destroyBoard = function() {
     var gameContainer = document.querySelector('.game-container')
     while (gameContainer.hasChildNodes()) {
       gameContainer.removeChild(gameContainer.firstChild);
     }
 
-    var scoreBoardDiv = document.querySelector('.score-board');
-    var gameboardResetDiv = document.querySelector('.gameboard-reset');
-    scoreBoardDiv.remove();
-    gameboardResetDiv.remove();
+    document.querySelector('.score-board').remove();
+    document.querySelector('.gameboard-reset').remove();
 
     var gameOver = document.querySelector('.game-over')
     if (gameOver) {
       gameOver.remove();
     }
+  }
 
+  var recreateInput = function() {
     var gameSetupDiv = document.createElement('div');
     document.querySelector('.input-container').appendChild(gameSetupDiv);
     gameSetupDiv.className = 'game-setup';
 
-
-    var gameboardInput = document.createElement('div');
-    document.querySelector('.game-setup').appendChild(gameboardInput);
-    gameboardInput.className = 'gameboard-input-rows';
+    var gameboardInputRows = document.createElement('div');
+    document.querySelector('.game-setup').appendChild(gameboardInputRows);
+    gameboardInputRows.className = 'gameboard-input-rows';
 
     var rowsLabel = document.createElement('label');
-    gameboardInput.appendChild(rowsLabel);
+    gameboardInputRows.appendChild(rowsLabel);
     rowsLabel.innerHTML = 'Rows:  ';
     rowsLabel.setAttribute('for', 'rows');
 
     var rowsInput = document.createElement('input');
-    gameboardInput.appendChild(rowsInput);
+    gameboardInputRows.appendChild(rowsInput);
     rowsInput.setAttribute('type', 'number');
     rowsInput.setAttribute('class', 'form-control rows');
     rowsInput.setAttribute('name', 'rows');
@@ -283,26 +332,23 @@ window.addEventListener('DOMContentLoaded', function () {
     rowsInput.setAttribute('max', '8');
     rowsInput.setAttribute('placeholder', '1');
 
-
-
-    var gameboardInput2 = document.createElement('div');
-    document.querySelector('.game-setup').appendChild(gameboardInput2);
-    gameboardInput2.className = 'gameboard-input-cols';
+    var gameboardInputCols = document.createElement('div');
+    document.querySelector('.game-setup').appendChild(gameboardInputCols);
+    gameboardInputCols.className = 'gameboard-input-cols';
 
     var colsLabel = document.createElement('label');
-    gameboardInput2.appendChild(colsLabel);
+    gameboardInputCols.appendChild(colsLabel);
     colsLabel.innerHTML = 'Columns:  ';
     colsLabel.setAttribute('for', 'cols');
 
     var colsInput = document.createElement('input');
-    gameboardInput2.appendChild(colsInput);
+    gameboardInputCols.appendChild(colsInput);
     colsInput.setAttribute('type', 'number');
     colsInput.setAttribute('class', 'form-control cols');
     colsInput.setAttribute('name', 'cols');
     colsInput.setAttribute('min', '1');
     colsInput.setAttribute('max', '8');
     colsInput.setAttribute('placeholder', '1');
-
 
 
     var gameboardSubmit = document.createElement('div');
@@ -314,36 +360,25 @@ window.addEventListener('DOMContentLoaded', function () {
     playButton.className = 'btn btn-primary';
     playButton.setAttribute('type', 'submit');
     playButton.innerHTML = 'Play!'
-
-    document.querySelector('.gameboard-submit').addEventListener('click', setupBoard);
-
   }
 
-  let playAgainReset = function() {
-    boxValues = {};
-    firstPlayerTurn = true;
-    playAgain = true;
-    resetGame = false;
-    playerOneScore = 0;
-    playerTwoScore = 0;
 
+  ///////////////////////////////////////////////////////////
+  // play again reset functions
+
+  var destroyGameOver = function() {
     var gameContainer = document.querySelector('.game-container')
     while (gameContainer.hasChildNodes()) {
       gameContainer.removeChild(gameContainer.firstChild);
     }
 
-    var gameOver = document.querySelector('.game-over');
-    gameOver.remove();
-
-    var playerOneScoreDiv = document.querySelector('.p1-score');
-    var playerTwoScoreDiv = document.querySelector('.p2-score');
-
-    playerOneScoreDiv.innerHTML = 'Player One Score: 0';
-    playerTwoScoreDiv.innerHTML = 'Player Two Score: 0';
-
-    setupBoard();
+    document.querySelector('.game-over').remove();
   }
 
-  document.querySelector('.gameboard-submit').addEventListener('click', setupBoard);
+  var resetScoreboard = function() {
+    document.querySelector('.p1-score').innerHTML = 'Player One Score: 0';
+    document.querySelector('.p2-score').innerHTML = 'Player Two Score: 0';;
+  }
+
 
 });

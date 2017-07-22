@@ -155,9 +155,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var addScoresReset = function() {
     if (!playAgain) {
+      var inputContainer = document.querySelector('.input-container');
       var gameSetup = document.querySelector('.game-setup');
-      this.removeEventListener('click', setupBoard);
-      gameSetup.remove();
+      document.querySelector('.gameboard-submit').removeEventListener('click', setupBoard);
+      inputContainer.removeChild(gameSetup);
 
       var resetBoardDiv = document.createElement('div');
       resetBoardDiv.className = 'gameboard-reset';
@@ -200,7 +201,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var edgeRow = parseInt(event.target.className.substring(3,4));
     var edgeCol = parseInt(event.target.className.substring(4,5));
     var boxIndex = [];
-    if (event.target.className.includes('he')) {
+    if (event.target.className.indexOf('he') > -1) {
       if (edgeRow == 1) {
         boxIndex[0] = "" + edgeRow + edgeCol;
       } else if (edgeRow == (parseInt(rows.value) + 1)) {
@@ -211,7 +212,7 @@ window.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    if (event.target.className.includes('ve')) {
+    if (event.target.className.indexOf('ve') > -1) {
       if (edgeCol == 1) {
         boxIndex[0] = "" + edgeRow + edgeCol;
       } else if (edgeCol == (parseInt(cols.value) + 1)) {
@@ -300,12 +301,15 @@ window.addEventListener('DOMContentLoaded', function () {
       gameContainer.removeChild(gameContainer.firstChild);
     }
 
-    document.querySelector('.score-board').remove();
-    document.querySelector('.gameboard-reset').remove();
+    var gameReset = document.querySelector('.gameboard-reset');
+    document.querySelector('.input-container').removeChild(gameReset);
+
+    var scoreBoard = document.querySelector('.score-board');
+    document.body.removeChild(scoreBoard);
 
     var gameOver = document.querySelector('.game-over')
     if (gameOver) {
-      gameOver.remove();
+      document.body.removeChild(gameOver);
     }
   }
 
@@ -372,7 +376,8 @@ window.addEventListener('DOMContentLoaded', function () {
       gameContainer.removeChild(gameContainer.firstChild);
     }
 
-    document.querySelector('.game-over').remove();
+    var gameOver = document.querySelector('.game-over')
+    document.body.removeChild(gameOver);
   }
 
   var resetScoreboard = function() {

@@ -33,11 +33,13 @@ window.addEventListener('DOMContentLoaded', function () {
     addScoresReset();
   }
 
-  var edgeClick = function(event) {
-    changeEdgeColor.call(this);
-    var scored = incrementScores(addEdgeClicks());
-    checkTurnChange(scored);
-    checkIfOver();
+  var gameClick = function(event) {
+    if (event.target.className.slice(0,3) == 'he-' || event.target.className.slice(0,3) == 've-') {
+      changeEdgeColor(event.target);
+      var scored = incrementScores(addEdgeClicks());
+      checkTurnChange(scored);
+      checkIfOver();
+    }
   }
 
   var resetBoard = function() {
@@ -114,8 +116,6 @@ window.addEventListener('DOMContentLoaded', function () {
         var horizontalEdgeDiv = document.createElement('div');
         document.querySelector('.horizontal-row-' + j).appendChild(horizontalEdgeDiv);
         horizontalEdgeDiv.className = 'he-' + (j + 1) + i + ' p1-turn';
-        listenByDiv(horizontalEdgeDiv, 'click', edgeClick);
-
 
         if (i == cols.value) {
           var cornerDiv = document.createElement('div');
@@ -135,7 +135,6 @@ window.addEventListener('DOMContentLoaded', function () {
           var verticalEdgeDiv = document.createElement('div');
           document.querySelector('.vertical-row-' + j).appendChild(verticalEdgeDiv);
           verticalEdgeDiv.className = 've-' + (j + 1) + i + ' p1-turn';
-          listenByDiv(verticalEdgeDiv, 'click', edgeClick);
 
           var boxDiv = document.createElement('div');
           document.querySelector('.vertical-row-' + j).appendChild(boxDiv);
@@ -145,12 +144,15 @@ window.addEventListener('DOMContentLoaded', function () {
             var verticalEdgeDiv = document.createElement('div');
             document.querySelector('.vertical-row-' + j).appendChild(verticalEdgeDiv);
             verticalEdgeDiv.className = 've-' + (j + 1) + (i + 1) +  ' p1-turn';
-            listenByDiv(verticalEdgeDiv, 'click', edgeClick);
             verticalRowCreated = false;
           }
         }
       }
     }
+
+    var gameContainer = document.querySelector('.game-container')
+    listenByDiv(gameContainer, 'click', gameClick);
+
   }
 
   var addScoresReset = function() {
@@ -191,10 +193,9 @@ window.addEventListener('DOMContentLoaded', function () {
   ///////////////////////////////////////////////////////////
   // edgeClick functions
 
-  var changeEdgeColor = function() {
-    this.style.backgroundColor = '#000';
-    this.className = event.target.className.substring(0,5);
-    this.removeEventListener('click', edgeClick);
+  var changeEdgeColor = function(target) {
+    target.style.backgroundColor = '#000';
+    target.className = event.target.className.substring(0,5);
   }
 
   var addEdgeClicks = function() {

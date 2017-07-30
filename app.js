@@ -94,6 +94,8 @@ window.addEventListener('DOMContentLoaded', function () {
     var horizontalRowCreated = false;
     var verticalRowCreated = false;
 
+    var gameContainer = document.querySelector('.game-container');
+
     for (var j = 0; j <= rows.value; j++) {
       for (var i = 1; i <= cols.value; i++) {
 
@@ -104,22 +106,24 @@ window.addEventListener('DOMContentLoaded', function () {
 
         if (horizontalRowCreated != true) {
           var horizontalRowDiv = document.createElement('div');
-          document.querySelector('.game-container').appendChild(horizontalRowDiv);
+          gameContainer.appendChild(horizontalRowDiv);
           horizontalRowDiv.className = 'horizontal-row-' + j;
           horizontalRowCreated = true;
         }
 
+        var horRowName = document.querySelector('.horizontal-row-' + j);
+
         var cornerDiv = document.createElement('div');
-        document.querySelector('.horizontal-row-' + j).appendChild(cornerDiv);
+        horRowName.appendChild(cornerDiv);
         cornerDiv.className = 'corner';
 
         var horizontalEdgeDiv = document.createElement('div');
-        document.querySelector('.horizontal-row-' + j).appendChild(horizontalEdgeDiv);
+        horRowName.appendChild(horizontalEdgeDiv);
         horizontalEdgeDiv.className = 'he-' + (j + 1) + i + ' p1-turn';
 
         if (i == cols.value) {
           var cornerDiv = document.createElement('div');
-          document.querySelector('.horizontal-row-' + j).appendChild(cornerDiv);
+          horRowName.appendChild(cornerDiv);
           cornerDiv.className = 'corner';
           horizontalRowCreated = false;
         }
@@ -127,22 +131,24 @@ window.addEventListener('DOMContentLoaded', function () {
         if (j < rows.value) {
           if (verticalRowCreated != true) {
             var verticalRowDiv = document.createElement('div');
-            document.querySelector('.game-container').appendChild(verticalRowDiv);
+            gameContainer.appendChild(verticalRowDiv);
             verticalRowDiv.className = 'vertical-row-' + j;
             verticalRowCreated = true;
           }
 
+          var vertRowName = document.querySelector('.vertical-row-' + j);
+
           var verticalEdgeDiv = document.createElement('div');
-          document.querySelector('.vertical-row-' + j).appendChild(verticalEdgeDiv);
+          vertRowName.appendChild(verticalEdgeDiv);
           verticalEdgeDiv.className = 've-' + (j + 1) + i + ' p1-turn';
 
           var boxDiv = document.createElement('div');
-          document.querySelector('.vertical-row-' + j).appendChild(boxDiv);
+          vertRowName.appendChild(boxDiv);
           boxDiv.className = 'box-' + (j + 1) + i;
 
           if (i == cols.value) {
             var verticalEdgeDiv = document.createElement('div');
-            document.querySelector('.vertical-row-' + j).appendChild(verticalEdgeDiv);
+            vertRowName.appendChild(verticalEdgeDiv);
             verticalEdgeDiv.className = 've-' + (j + 1) + (i + 1) +  ' p1-turn';
             verticalRowCreated = false;
           }
@@ -150,7 +156,6 @@ window.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    var gameContainer = document.querySelector('.game-container')
     listenByDiv(gameContainer, 'click', gameClick);
 
   }
@@ -164,7 +169,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
       var resetBoardDiv = document.createElement('div');
       resetBoardDiv.className = 'gameboard-reset';
-      document.querySelector('.input-container').appendChild(resetBoardDiv);
+      inputContainer.appendChild(resetBoardDiv);
 
       var resetButton = document.createElement('button');
       resetButton.className = 'btn btn-secondary reset-board';
@@ -319,8 +324,9 @@ window.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.input-container').appendChild(gameSetupDiv);
     gameSetupDiv.className = 'game-setup';
 
+    var gameSetup = document.querySelector('.game-setup');
     var gameboardInputRows = document.createElement('div');
-    document.querySelector('.game-setup').appendChild(gameboardInputRows);
+    gameSetup.appendChild(gameboardInputRows);
     gameboardInputRows.className = 'gameboard-input-rows';
 
     var rowsLabel = document.createElement('label');
@@ -338,7 +344,7 @@ window.addEventListener('DOMContentLoaded', function () {
     rowsInput.setAttribute('placeholder', '1');
 
     var gameboardInputCols = document.createElement('div');
-    document.querySelector('.game-setup').appendChild(gameboardInputCols);
+    gameSetup.appendChild(gameboardInputCols);
     gameboardInputCols.className = 'gameboard-input-cols';
 
     var colsLabel = document.createElement('label');
@@ -357,7 +363,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 
     var gameboardSubmit = document.createElement('div');
-    document.querySelector('.game-setup').appendChild(gameboardSubmit);
+    gameSetup.appendChild(gameboardSubmit);
     gameboardSubmit.className = 'gameboard-submit';
 
     var playButton = document.createElement('button');

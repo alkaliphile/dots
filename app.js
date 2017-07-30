@@ -35,8 +35,8 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var gameClick = function(event) {
     if (event.target.className.slice(0,3) == 'he-' || event.target.className.slice(0,3) == 've-') {
-      changeEdgeColor(event.target);
-      var scored = incrementScores(addEdgeClicks());
+      changeEdgeColor(event.target, event);
+      var scored = incrementScores(addEdgeClicks(event));
       checkTurnChange(scored);
       checkIfOver();
     }
@@ -193,12 +193,12 @@ window.addEventListener('DOMContentLoaded', function () {
   ///////////////////////////////////////////////////////////
   // edgeClick functions
 
-  var changeEdgeColor = function(target) {
+  var changeEdgeColor = function(target, event) {
     target.style.backgroundColor = '#000';
     target.className = event.target.className.substring(0,5);
   }
 
-  var addEdgeClicks = function() {
+  var addEdgeClicks = function(event) {
     var edgeRow = parseInt(event.target.className.substring(3,4));
     var edgeCol = parseInt(event.target.className.substring(4,5));
     var boxIndex = [];

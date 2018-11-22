@@ -1,1 +1,4 @@
 .git
+**/config.dev.json
+**/secrets.sh
+**/node_modules
